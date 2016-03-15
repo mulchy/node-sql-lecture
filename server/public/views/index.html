@@ -3,15 +3,16 @@
   <head>
     <title>Postgres Example</title>
 
+    <script src="vendors/jquery.min.js"></script>
     <script src="scripts/app.js"></script>
   </head>
   <body>
     <form>
       <label>Enter your name:</label>
-      <input type="text" />
+      <input type="text" required name="name"/>
 
       <label>Enter your address:</label>
-      <input type="text"  />
+      <input type="text" name="address"/>
 
       <input type="submit" />
     </form>
