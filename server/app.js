@@ -28,8 +28,8 @@ app.post('/people', function(req, res) {
     } else {
       var result = [];
 
-      var query = client.query('INSERT INTO people (name, address) VALUES ($1, $2) '+ '
-                                RETURNING id, name, address', [name, address]);
+      var query = client.query('INSERT INTO people (name, address) VALUES ($1, $2) ' +
+                                'RETURNING id, name, address', [name, address]);
 
       query.on('row', function(row){
         result.push(row);
