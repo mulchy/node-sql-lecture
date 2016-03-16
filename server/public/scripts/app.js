@@ -1,5 +1,6 @@
 $(document).ready(function() {
   $('form').on('submit', handleSubmit);
+  getAllPeople();
 });
 
 function handleSubmit(event) {
@@ -27,4 +28,21 @@ function sendDataToServer(personData) {
 
 function handleServerResponse(response) {
   console.log('Server says: ', response);
+  getAllPeople();
+}
+
+function getAllPeople() {
+  $.ajax({
+    type: 'GET',
+    url: '/people',
+    success: updateSelect
+  })
+}
+
+function updateSelect(serverResponse) {
+  console.log(serverResponse);
+  $('select').empty();
+  serverResponse.forEach(function(person){
+    $('select').append('<option>' + person.name + '</option>');
+  });
 }

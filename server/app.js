@@ -18,22 +18,22 @@ pg.connect(connectionString, function(err, client, done){
     //TODO end process with error code
   } else {
     var query = client.query('CREATE TABLE IF NOT EXISTS people (' +
-                              'id SERIAL PRIMARY KEY,' +
-                              'name varchar(80) NOT NULL,' +
-                              'address text);'
-    );
+    'id SERIAL PRIMARY KEY,' +
+    'name varchar(80) NOT NULL,' +
+    'address text);'
+  );
 
-    query.on('end', function(){
-      console.log('Successfully ensured schema exists');
-      done();
-    });
+  query.on('end', function(){
+    console.log('Successfully ensured schema exists');
+    done();
+  });
 
-    query.on('error', function() {
-      console.log('Error creating schema!');
-      //TODO exit(1)
-      done();
-    });
-  }
+  query.on('error', function() {
+    console.log('Error creating schema!');
+    //TODO exit(1)
+    done();
+  });
+}
 });
 
 var app = express();
@@ -60,7 +60,7 @@ app.post('/people', function(req, res) {
       var result = [];
 
       var query = client.query('INSERT INTO people (name, address) VALUES ($1, $2) ' +
-                                'RETURNING id, name, address', [name, address]);
+      'RETURNING id, name, address', [name, address]);
 
       query.on('row', function(row){
         result.push(row);
@@ -78,6 +78,35 @@ app.post('/people', function(req, res) {
       });
     }
   });
+});
+
+app.get('/people', function(req, res){
+  // connect to DB
+  pg.connect(connectionString, function(err, client, done){
+    if (err) {
+      done();
+      console.log('Error connecting to DB: ', err);
+      res.status(500).send(err);
+    } else {
+      var result = [];
+      var query = client.query('SELECT * FROM people;');
+
+      query.on('row', function(row){
+        result.push(row);
+      });
+
+      query.on('end', function() {
+        done();
+        res.send(result);
+      });
+
+      query.on('error', function(error) {
+        console.log('Error running query:', error);
+        done();
+        res.status(500).send(error);
+      });
+    }
+  })
 });
 
 app.get('/*', function(req, res){
